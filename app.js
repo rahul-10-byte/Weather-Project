@@ -1,14 +1,26 @@
 //jshint esversion: 6
 
 const express = require("express");
-const { write } = require("fs");
 const https = require("https");
+const bodyParser = require("body-parser");
  
 const app = express();
 
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.get("/", function (req, res) {
 
-    const url = "https://api.openweathermap.org/data/2.5/weather?q=aurangabad&units=metric&appid=321f82581bd9830ec1119d4992566d66";
+    res.sendFile(__dirname + "/index.html");
+
+});
+
+app.post("/", function (req, res) {
+
+    const query = req.body.cityName;
+    const apiKey = "321f82581bd9830ec1119d4992566d66"; 
+    const unit = "metric";
+    const url = "https://api.openweathermap.org/data/2.5/weather?q="+ query +"&units="+ unit +"&appid=" + apiKey;
+
     https.get(url, function (response) {
 
         response.on("data", function (data) {
@@ -29,10 +41,7 @@ app.get("/", function (req, res) {
             console.log(tempDesc);
         });
     });
-   
-    
 });
-
 
 app.listen(3000, function () {
     console.log("server started Successfully at 3000!!!");
